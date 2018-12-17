@@ -1,0 +1,42 @@
+---
+title: "Comprensión del Negocio"
+author: "Lorena Mejía, Ricardo Figueroa y Alfredo Carrillo"
+date: "Diciembre 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Compresión del Negocio
+
+### Antescedentes:
+
+Un *negocio de suscripción* es aquel en el que el cliente debe de pagar de forma recurrente un monto a intervalos regulares para acceder a un producto o servicio. Este es un modelo muy común en muchos negocios y servicios. 
+
+En general, se acostumbra que los planes pueden sean mensuales, anuales o por temporada. Los negociosos se benefician con este plan porque la tendencia de ingreso está asegurada a corto plazo. Esto les permite reducir la incertidumbre y riesgo de la empresa. Además los clientes usualmente se enganchan con el producto después del periodo y lo renuevan. 
+
+Para ser exitosas a largo plazo, a las empresas les interesa predecir de forma precisa si un cliente va a renovar o no. Ligeras variaciones en la tasa de cancelación pueden variar de manera significativa sus ingresos. En este reporte se estudia el caso particular de la empresa KKBox.
+
+KKBox es un servicio de *streaming* para multimedia desarrollado por KKBox Inc., una compañía de software de Taipei en 2004. Su enfoque son clientes en Surasia, que incluyen a países como Taiwan, Hong Kong, Malasia y Singapore. Tienen un esquema donde las personas pueden escuchar canciones gratis pero también un esquema de suscripción mensual. También tienen una parte considerable de anuncions con bae en anuncios. Es una compañía líder a nivel mundial. Tienen la librería más extensa de música asiatica, con aproximadamente treinta millones de canciones. En 2015 contaba ya con 10 millones de clientes y con cerca de 1600 artistas registrados.
+
+A la empresa le interesa predecir acertadamente si sus clientes van a renovar o no después de que finalice el actual plazo de contratación. Actualmente, la empresa usa técnicas de análisis de supervivencia para determinar el residual de la vida de la membresía para cada suscriptor. A KKBox le interesa además conocer las razones que hacen que un cliente se quede o se vaya.  
+
+### Objetivo
+
+Para este reporte podemos considerar dos objetivos principales.
+
+* Diseñar un algoritmo para predecir de manera precisa, usando las covariantes de la base de datos de la empresa, si el cliente renovará o cancelará la suscripción tras finalizar su suscripción actual.
+
+* Determinar las razones por las cuáles un cliente permanece o abandona el servicio.
+
+* Recomendar a la empresa cómo debe de evitar que los clientes no renueven y que debe de enfatizar para que los clientes permanezcan.
+
+### Criterio de éxito
+
+De acuerdo al contexto, es muy importante predecir con la máxima precisión posible. Se espera entonces generar un modelo con un tasa de precisión de cancelación sobre el 90%. Tener una buena interpretación del modelo también será importante para conocer las causas de renovación o deserción de la suscripción. 
+
+### Plan del proyecto
+
+Se trabajará de acuerdo a la metodología CRISP. Se hará un análisis exploratorio de los datos univariado, bivariado y multivariado. Después, se harán reportes reproducibles de selección e integración de datos, limpieza de datos e ingeniería de características. Se procede a hacer distintos modelos en Python con los hyperparámetros optimizados. Se selecciona, a partir del error de prueba, el modelo más adecuado. Se cargaran los resultados al concurso de Kaggle en la siguiente página: https://www.kaggle.com/c/kkbox-churn-prediction-challenge. Se hace un desarrollo en la Web para la predicción de datos nuevos. Se concluye con un reporte con las recomendaciones pertinentes. 
