@@ -40,22 +40,6 @@ We created an RDD and data frame with the following commands in order to make a 
 
 `val sqlContext = new org.apache.spark.sql.SQLContext(sc)`
 
-`val df = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").load("s3://proyectomineria/data/user_logs").toDF("msno", "date", "num_25", "num_50", "num_75", "num_985", "num_100", "num_unq", "total_secs")`
-
-The same for the table "transactions"
-
-`val df_transactions = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").load("s3://proyectomineria/data/transactions").toDF("msno", "payment_method_id", "payment_plan_days", "plan_list_price", "actual_amount_paid", "is_auto_renew", "transaction_date", "membership_expire_date", "is_cancel")`
-
-For members csv:
-`val df_members = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").load("s3://proyectomineria/data/members").toDF("msno", "city", "bd", "gender", "registered_via", "registered_init_time")`
-
-For train data:
-`val df_train = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").load("s3://proyectomineria/data/train").toDF("msno", "is_churn")`
-
-For test data:
-`val df_test = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").load("s3://proyectomineria/data/test").toDF("msno", "is_churn")`
-
-
 `import org.apache.spark.sql.functions.{row_number, max, broadcast}`
 
 `import org.apache.spark.sql.expressions.Window`
@@ -65,40 +49,68 @@ For test data:
 For transactions
 `val w_t = Window.partitionBy($"msno").orderBy($"transaction_date".desc)`
 
-`val dfTop15 = df.withColumn("rn", row_number.over(w)).where($"rn" <= 15).drop("rn")`
+import test
 
-`val dfTop_transaction = df_transactions.withColumn("rn", row_number.over(w_t)).where($"rn" == 15).drop("rn")`
-
-`val avg_dfTop15 = dfTop15.groupBy($"msno").agg(avg($"num_25").as("avg_num_25"),avg($"num_50").as("avg_num_50"), avg($"num_75").as("avg_num_75"), avg($"num_985").as("avg_num_985"), avg($"num_100").as("avg_num_100"), avg($"num_unq").as("avg_num_unq"), avg($"total_secs").as("total_secs"))`
-
-For transactions
-val avg_dfTop5 = dfTop_transaction.groupBy($"msno").agg(avg($"payment_method_id").as("payment_method_id"),avg($"payment_plan_days").as("payment_plan_days"), avg($"plan_list_price").as("plan_list_price"), avg($"actual_amount_paid").as("actual_amount_paid"), avg($"is_auto_renew").as("is_auto_renew"), avg($"transaction_date").as("transaction_date"), avg($"membership_expire_date").as("membership_expire_date"),avg($"is_cancel").as("is_cancel"))
-
-In order to write to S3: 
-`dfTop15.coalesce(1).write.format("com.databricks.spark.csv").option("header", "true").save("s3://proyectomineria/data/resumen_logs")`
-
-For transactions:
-`dfTop_transaction.coalesce(1).write
-.format("com.databricks.spark.csv")
-.option("header", "true")
-.save("s3://proyectomineria/data/resumen_transactions")`
-
-The command to join the summary dataframes is the following:
-
-Join train table with members:
-
-`val joinedDF1 = df_train.as('a).join(df_members.as('b),$"a.msno" === $"b.msno")`
+`val df_test = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").load("s3://proyectomineria/data/test/sample_submission_zero.csv").toDF("msno", "is_churn")`
 
 
-Join joined table (members with train) with summary-average logs table
+import train
+`val df_train = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").load("s3://proyectomineria/data/train/train.csv").toDF("msno", "is_churn")`
 
-`val joinedDF2 = joinedDF1.join(df_avg_logs,joinedDF1("a.msno")===df_avg_logs("msno"))`
+import user logs
 
-Join joinedDF2 table with summary transacions table:
+`val df_user_logs = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").load("s3://proyectomineria/data/user_logs").toDF("msno", "date", "num_25", "num_50", "num_75", "num_985", "num_100", "num_unq", "total_secs")`
 
-`val joinedDF3 = joinedDF2.join(avg_dfTop5,joinedDF1("a.msno")===avg_dfTop5("msno"))`
+import members
 
-Once we have the joined tables, we need to drop ducplicate columns by executing 
+`val df_members = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").load("s3://proyectomineria/data/members").toDF("msno", "city", "bd", "gender", "registered_via", "registered_init_time")`
 
-`val joinedDF8 = joinedDF3.select("a.msno", "is_churn", "city", "bd", "gender", "registered_via", "registered_init_time", "date", "num_25", "num_50", "num_75", "num_985", "num_100", "num_unq", "total_secs", "payment_method_id", "payment_plan_days", "plan_list_price", "actual_amount_paid", "is_auto_renew", "transaction_date", "membership_expire_date", "is_cancel")
-`
+order user_logs
+`import org.apache.spark.sql.functions.{row_number, max, broadcast}`
+`import org.apache.spark.sql.expressions.Window`
+`val w = Window.partitionBy($"msno").orderBy($"date".desc)`
+`val dfTop15_user_logs = df_user_logs.withColumn("rn", row_number.over(w)).where($"rn" <= 15).drop("rn")`
+
+average user logs
+`val dfTop15_user_logs_avg = dfTop15_user_logs.groupBy($"msno").agg(avg($"date").as("date") ,avg($"num_25").as("avg_num_25"),avg($"num_50").as("avg_num_50"), avg($"num_75").as("avg_num_75"), avg($"num_985").as("avg_num_985"), avg($"num_100").as("avg_num_100"), avg($"num_unq").as("avg_num_unq"), avg($"total_secs").as("total_secs"))`
+
+order transactions
+
+`val dfTop_transaction = df_transactions.withColumn("rn", row_number.over(w_t)).where($"rn" <= 1).drop("rn")`
+
+Joins
+
+Train + Members
+`joinedDF1_members = df_train.as('a).join(df_members.as('b),$"a.msno" === $"b.msno")`
+row count= 877,161
+
+(Train + Members) + Average Logs
+`val joinedDF2_train_members_logs = joinedDF1_members.join(dfTop15_user_logs_avg,joinedDF1_members("a.msno")===dfTop15_user_logs_avg("msno"))`
+row count = 869,880
+
+(Train + Members) + Average Logs + transactions
+`val joinedDF3_train_members_logs_transactions = joinedDF2_train_members_logs.join(dfTop_transaction,joinedDF2_train_members_logs("a.msno")===dfTop_transaction("msno"))`
+row count = 869,880
+
+val joinedDF_train_test = joinedDF3_train_members_logs_transactions.select("avg_num_unq", "b.bd", "payment_plan_days", "a.msno", "b.city", "avg_num_50", "b.registered_init_time", "avg_num_75", "plan_list_price", "actual_amount_paid", "avg_num_25", "avg_num_100", "membership_expire_date", "a.is_churn", "is_auto_renew", "payment_method_id", "b.registered_via", "avg_num_985", "b.gender", "total_secs", "is_cancel", "transaction_date")
+
+`joinedDF_final_train.coalesce(1).write.format("com.databricks.spark.csv").option("header", "true").save("s3://proyectomineria/data/resumen_final_train")`
+
+
+
+
+Test + Members
+`val joinedDF1_members_test = df_test.as('a).join(df_members.as('b),$"a.msno" === $"b.msno")`
+row count = 860,967
+
+(Test + Members) + Average Logs
+`val joinedDF2_test_members_logs = joinedDF1_members_test.join(dfTop15_user_logs_avg,joinedDF1_members_test("a.msno")===dfTop15_user_logs_avg("msno"))`
+
+(Test + Members) + Average Logs + transactions
+`val joinedDF3_test_members_logs_transactions = joinedDF2_test_members_logs.join(avg_dfTop5,joinedDF2_test_members_logs("a.msno")===avg_dfTop5("msno"))`
+
+row count = 849762
+
+`val joinedDF_final_test = joinedDF3_test_members_logs_transactions.select("avg_num_unq", "date", "b.bd", "payment_plan_days", "b.city", "avg_num_50", "b.registered_init_time", "msno", "avg_num_75", "plan_list_price", "actual_amount_paid", "avg_num_25", "avg_num_100", "membership_expire_date", "a.is_churn", "is_auto_renew", "payment_method_id", "b.registered_via", "avg_num_985", "b.gender", "total_secs", "is_cancel", "transaction_date")`
+
+`joinedDF_final_test.coalesce(1).write.format("com.databricks.spark.csv").option("header", "true").save("s3://proyectomineria/data/resumen_final_test")`
