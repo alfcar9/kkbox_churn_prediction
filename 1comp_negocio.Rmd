@@ -40,3 +40,48 @@ De acuerdo al contexto, es muy importante predecir con la máxima precisión pos
 ### Plan del proyecto
 
 Se trabajará de acuerdo a la metodología CRISP. Se hará un análisis exploratorio de los datos univariado, bivariado y multivariado. Después, se harán reportes reproducibles de selección e integración de datos, limpieza de datos e ingeniería de características. Se procede a hacer distintos modelos en Python con los hyperparámetros optimizados. Se selecciona, a partir del error de prueba, el modelo más adecuado. Se cargaran los resultados al concurso de Kaggle en la siguiente página: https://www.kaggle.com/c/kkbox-churn-prediction-challenge. Se hace un desarrollo en la Web para la predicción de datos nuevos. Se concluye con un reporte con las recomendaciones pertinentes. 
+
+## Compresión de los datos
+
+De Kaggle no se descargó una única tabla sino se descargó una base de datos. En ella vienen especificados los ID's de prueba y entrenamiento pero las covariables que hay que asignar estan revueltas en el resto de las tablas. Fue importante entonces generar estas covariables. A continuación enlistamos las diferentes tablas y describimos que tiene cada una de ellas.
+
+*transactions.csv* 
+
+Transaccion de los usuarios hasta 28/2/2017
+
+* msno: user id
+* payment_method_id: payment method
+* payment_plan_days: length of membership plan in days
+* plan_list_price: in New Taiwan Dollar (NTD)
+* actual_amount_paid: in New Taiwan Dollar (NTD)
+* is_auto_renew
+* transaction_date: format %Y%m%d
+* membership_expire_date: format %Y%m%d
+* is_cancel: whether or not the user canceled the membership in this transaction.
+
+*user_logs.csv*
+
+Logs diarios de los usuarios describiendo su comportamiento. Datos recolectados hasta 28/2/2017
+
+* msno: user id
+* date: format %Y%m%d
+* num_25: # of songs played less than 25% of the song length
+* num_50: # of songs played between 25% to 50% of the song length
+* num_75: # of songs played between 50% to 75% of of the song length
+* num_985: # of songs played between 75% to 98.5% of the song length
+* num_100: # of songs played over 98.5% of the song length
+* num_unq: # of unique songs played
+* total_secs: total seconds played
+user information. Note that not every user in the dataset is available.
+
+*members.csv*
+
+Información del usuario. No hay información para cada uno de los usuarios.
+
+* msno
+* city
+* bd: age. Note: this column has outlier values ranging from -7000 to 2015, please use your judgement.
+* gender
+* registered_via: registration method
+* registration_init_time: format %Y%m%d
+* expiration_date: format %Y%m%d, taken as a snapshot at which the member.csv is extracted. Not representing the actual churn behavior.
