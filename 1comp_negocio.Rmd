@@ -31,11 +31,11 @@ A la empresa le interesa predecir acertadamente si sus clientes van a renovar o 
 
 Para este reporte podemos considerar dos objetivos principales.
 
-* Diseñar un algoritmo para predecir correctamente, usando las covariantes de la base de datos de la empresa, si el cliente renovará  o cancelará la suscripción tras finalizar su suscripción actual.
+* Predecir si el cliente renovará  o cancelará la suscripción tras finalizar su suscripción actual.
 
 * Determinar las razones por las cuáles un cliente permanece o abandona el servicio.
 
-* Recomendar a la empresa cómo debe de evitar que los clientes no renueven y que debe de enfatizar para que los clientes permanezcan.
+* Recomendar a la empresa cómo debe de evitar que los clientes no renueven y qué debe de enfatizar para que los clientes permanezcan.
 
 ### Criterio de éxito
 
