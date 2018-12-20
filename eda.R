@@ -185,27 +185,3 @@ View(pcaM)
 
 
 
-
-
-
-
-##############################
-#BASURA
-members  %>% mutate(bd = as.double(bd)) %>%
-  ft_bucketizer(input_col  = "bd",
-                output_col = "age_bucket",
-                splits     = c(0, 12, 20,60,100))
-#ggplot(trans, aes=(x=sdf_read_column(trans, "plan_list_price"), y=sdf_read_column(trans, "actual_amount_paid")))
-ggplot(trans, aes(plan_list_price, actual_amount_paid))+
-  geom_point(aes(size = count), alpha = 1/2) +
-  geom_smooth() +
-  scale_size_area(max_size = 2)
-
-##sería ideal que esto funcionara
-user_log %>%
-  gather(num_25,  num_50, num_75, num_985, num_100, key = "slen", value = "cases") %>%
-  mutate(slen = fct_relevel(factor(slen),"num_100", after = Inf)) %>%
-  ggplot(aes(cases, fill = slen)) +
-  geom_density(position = "stack", bw = .1) +
-  scale_x_log10(lim = c(1,800)) +
-  labs(x = "Number of songs", fill = "% played")
