@@ -23,11 +23,15 @@ KKBox es un servicio de *streaming* para multimedia desarrollado por KKBox Inc.,
 
 A la empresa le interesa predecir acertadamente si sus clientes van a renovar o no después de que finalice el actual plazo de contratación. Actualmente, la empresa usa técnicas de análisis de supervivencia para determinar el residual de la vida de la membresía para cada suscriptor. A KKBox le interesa además conocer las razones que hacen que un cliente se quede o se vaya.  
 
+### Pregunta del Proyecto
+
+¿Qué características tienen los clientes que no van a renovar la suscripción?
+
 ### Objetivo
 
 Para este reporte podemos considerar dos objetivos principales.
 
-* Diseñar un algoritmo para predecir de manera precisa, usando las covariantes de la base de datos de la empresa, si el cliente renovará o cancelará la suscripción tras finalizar su suscripción actual.
+* Diseñar un algoritmo para predecir correctamente, usando las covariantes de la base de datos de la empresa, si el cliente renovará  o cancelará la suscripción tras finalizar su suscripción actual.
 
 * Determinar las razones por las cuáles un cliente permanece o abandona el servicio.
 
